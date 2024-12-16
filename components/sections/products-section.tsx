@@ -2,6 +2,7 @@
 
 import { products } from "@/config/products";
 import { ProductCarousel } from "@/components/product/product-carousel";
+import { Button } from "../ui/button";
 
 // Duplicate products to have more items for the carousel
 const extendedProducts = [...products, ...products, ...products].map((product, index) => ({
@@ -23,6 +24,15 @@ export function ProductsSection() {
         {/* Featured Products Carousel */}
         <div className="mb-16">
           <ProductCarousel products={extendedProducts} autoPlayInterval={3000} />
+        </div>
+
+        <div className="flex justify-center">
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90"
+          >
+            Consulter notre catalogue
+          </Button>
         </div>
       </div>
     </section>

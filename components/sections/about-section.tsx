@@ -27,7 +27,7 @@ const features = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-28 container-padding bg-background">
+    <section id="about" className="min-h-screen py-16 container-padding bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold">About Us</h2>
