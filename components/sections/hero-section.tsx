@@ -9,7 +9,7 @@ export function HeroSection() {
   const scrollToSection = useScrollToSection();
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center container-padding bg-white">
+    <section id="home" className="min-h-screen flex items-center justify-center container-padding bg-background">
       <div className="max-w-7xl w-full mx-auto grid md:grid-cols-2 gap-8 lg:gap-12 items-center py-24">
         <div className="text-center md:text-left space-y-6">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold">
