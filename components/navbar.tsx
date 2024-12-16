@@ -7,6 +7,8 @@ import { navItems } from "@/config/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
+import Logo from '@/public/logo.png';
+import Image from "next/image";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,12 +24,7 @@ export function Navbar() {
     <div className="fixed w-full z-50 px-4 py-4">
       <nav className="max-w-7xl mx-auto bg-background/90 backdrop-blur-sm border border-border rounded-2xl px-6 shadow-lg">
         <div className="flex justify-between h-16 items-center">
-          <button
-            onClick={() => handleSectionClick("home")}
-            className="flex-shrink-0 font-bold text-2xl text-red-600 hover:text-red-700 transition-colors"
-          >
-            V for Vape
-          </button>
+          <Image src={Logo} alt='logo' width={70} />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useScrollToSection } from "@/hooks/use-scroll-to-section";
 import Image from "next/image";
+import logo2 from '@/public/logo2.jpg';
 
 export function HeroSection() {
   const scrollToSection = useScrollToSection();
@@ -27,8 +28,8 @@ export function HeroSection() {
         </div>
         <div className="relative h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] rounded-xl overflow-hidden shadow-xl">
           <Image
-            src="https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?auto=format&fit=crop&q=80"
-            alt="Premium Vaping Device"
+            src={logo2}
+            alt="Logo here pahe"
             fill
             className="object-cover"
             priority
