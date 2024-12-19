@@ -10,9 +10,9 @@ export function ContactSection() {
     <section id="contact" className="py-36 container-padding bg-muted/50">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold">Contact Us</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold">Nous contacter</h2>
           <p className="text-lg sm:text-xl text-muted-foreground">
-            Have questions? We're here to help. Reach out to us through any of these channels.
+            Vous avez des questions, nous sommes là pour vous aider. <br />Contactez-nous par l'un de ces canaux.
           </p>
         </div>
 
@@ -21,26 +21,25 @@ export function ContactSection() {
             <div className="flex items-start gap-4">
               <Mail className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">Email Us</h3>
-                <p className="text-muted-foreground">support@vforvape.com</p>
+                <h3 className="font-semibold mb-1">Email</h3>
+                <p className="text-muted-foreground">Vforvape77@gmail.com</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
               <Phone className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">Call Us</h3>
-                <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                <h3 className="font-semibold mb-1">Téléphone</h3>
+                <p className="text-muted-foreground">01 60 32 93 09</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
               <MapPin className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
               <div>
-                <h3 className="font-semibold mb-1">Visit Us</h3>
+                <h3 className="font-semibold mb-1">Adresse</h3>
                 <p className="text-muted-foreground">
-                  123 Vape Street<br />
-                  New York, NY 10001
+                  Rue du Maréchal Gallieni, 77165 Saint-Soupplets
                 </p>
               </div>
             </div>
@@ -50,7 +49,7 @@ export function ContactSection() {
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium">
-                  Name
+                  Nom
                 </label>
                 <Input id="name" placeholder="Your name" />
               </div>
@@ -72,7 +71,7 @@ export function ContactSection() {
               />
             </div>
             <Button className="w-full bg-primary hover:bg-primary/90">
-              Send Message
+              Envoyer le mail
             </Button>
           </form>
         </div>

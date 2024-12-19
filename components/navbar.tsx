@@ -35,8 +35,8 @@ export function Navbar() {
                 className={cn(
                   "relative text-sm transition-colors hover:text-primary px-3 py-2",
                   activeSection === item.id
-                    ? "text-primary after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-full after:bg-red-600 after:rounded-full after:content-[''] after:transition-all after:duration-600 after:ease-out"
-                    : "text-muted-foreground after:absolute after:left-1/2 after:bottom-0 after:h-[3px] after:w-0 after:bg-red-600 after:rounded-full after:content-[''] after:transition-all after:duration-600 after:ease-out hover:after:w-full hover:after:left-0"
+                    ? "text-primary after:absolute after:left-0 after:top-12 after:bottom-0 after:h-[3px] after:w-full after:bg-red-600 after:rounded-full after:content-[''] after:transition-all after:duration-600 after:ease-out"
+                    : "text-muted-foreground after:absolute after:left-1/2 after:top-12 after:bottom-0 after:h-[3px] after:w-0 after:bg-red-600 after:rounded-full after:content-[''] after:transition-all after:duration-600 after:ease-out hover:after:w-full hover:after:left-0"
                 )}
               >
                 {item.label}

@@ -5,23 +5,23 @@ import { Building2, Award, Shield, Users } from "lucide-react";
 const features = [
   {
     icon: Building2,
-    title: "Established Since 2015",
-    description: "Nearly a decade of experience in providing premium vaping products and expert guidance to our community."
+    title: "Établi depuis 2016",
+    description: "Nous sommes fiers de servir nos clients depuis 2016 avec des produits de qualité et un service exceptionnel."
   },
   {
     icon: Award,
-    title: "Premium Quality",
-    description: "We carefully select and test all our products to ensure they meet the highest standards of quality and safety."
+    title: "Qualité Premium",
+    description: "Nous sélectionnons et testons soigneusement tous nos produits pour garantir qu'ils respectent les plus hauts standards de qualité et de sécurité."
   },
   {
     icon: Shield,
-    title: "Safety First",
-    description: "All our products comply with international safety standards and regulations for your peace of mind."
+    title: "La Sécurité Avant Tout",
+    description: "ous nos produits sont conformes aux normes de sécurité internationales et aux réglementations pour votre tranquillité d'esprit."
   },
   {
     icon: Users,
-    title: "Expert Support",
-    description: "Our knowledgeable team is always ready to help you find the perfect products for your needs."
+    title: "Support Expert",
+    description: "Notre équipe compétente est toujours prête à vous aider à trouver les produits parfaits pour vos besoins."
   }
 ];
 
@@ -30,9 +30,9 @@ export function AboutSection() {
     <section id="about" className="py-32 container-padding bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold">About Us</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold">À propos</h2>
           <p className="text-lg sm:text-xl text-muted-foreground">
-            We're passionate about providing the best vaping experience through quality products and exceptional service.
+            Nous sommes passionnés par l'idée d'offrir la meilleure expérience de vapotage grâce à des produits de qualité et un service exceptionnel.
           </p>
         </div>
         

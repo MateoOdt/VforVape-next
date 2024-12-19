@@ -1,15 +1,15 @@
 export const navItems = [
   {
     id: 'home',
-    label: 'Home',
+    label: 'Accueil',
   },
   {
     id: 'products',
-    label: 'Products',
+    label: 'Produits',
   },
   {
     id: 'about',
-    label: 'About',
+    label: 'À propos',
   },
   {
     id: 'contact',
