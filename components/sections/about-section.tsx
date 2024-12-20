@@ -16,7 +16,7 @@ const features = [
   {
     icon: Shield,
     title: "La Sécurité Avant Tout",
-    description: "ous nos produits sont conformes aux normes de sécurité internationales et aux réglementations pour votre tranquillité d'esprit."
+    description: "Tous nos produits sont conformes aux normes de sécurité internationales et aux réglementations pour votre tranquillité d'esprit."
   },
   {
     icon: Users,
