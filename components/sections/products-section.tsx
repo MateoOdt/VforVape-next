@@ -4,6 +4,7 @@ import { products } from "@/config/products";
 import { ProductCarousel } from "@/components/product/product-carousel";
 import { Button } from "../ui/button";
 import { useGradientAnimation } from "@/hooks/use-gradient-animation";
+import { useRouter } from "next/navigation"
 
 const extendedProducts = [...products, ...products, ...products].map((product, index) => ({
   ...product,
@@ -12,6 +13,7 @@ const extendedProducts = [...products, ...products, ...products].map((product, i
 
 export function ProductsSection() {
   const position = useGradientAnimation();
+  const router = useRouter();
 
   return (
     <section id="products" className="py-28 container-padding bg-muted/50">
@@ -38,6 +40,9 @@ export function ProductsSection() {
               backgroundSize: '220% auto',
               backgroundPosition: `${position}% 90%`,
               transition: 'background-position 0.15s ease-in-out',
+            }}
+            onClick={() => {
+              router.push("/catalog");
             }}
           >
             Consulter notre catalogue

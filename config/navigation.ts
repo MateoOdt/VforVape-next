@@ -15,4 +15,8 @@ export const navItems = [
     id: 'contact',
     label: 'Contact',
   },
+  {
+    id: 'catalog',
+    label: 'Catalogue',
+  }
 ];
