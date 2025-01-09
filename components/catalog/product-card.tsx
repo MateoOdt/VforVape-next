@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Product } from "@/types/catalog";
 
 interface ProductCardProps {

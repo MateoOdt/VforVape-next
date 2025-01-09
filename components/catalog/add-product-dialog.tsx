@@ -31,7 +31,7 @@ import { Input } from "@/components/ui/input"
 import { categories } from "@/config/catalog"
 import type { ProductFormValues } from "@/types/catalog"
 import { productSchema } from "@/lib/validations/catalog"
-
+import _ from 'lodash'
 export function AddProductDialog() {
   const [open, setOpen] = useState(false)
 
@@ -40,20 +40,41 @@ export function AddProductDialog() {
     defaultValues: {
       name: "",
       description: "",
-      price: 0,
       category: "",
-      image: "",
+      price: 0,
     },
   })
-
   async function onSubmit(data: ProductFormValues) {
+    console.log(data);
+  
     try {
-      // TODO: Implement product creation logic
-      console.log(data)
-      setOpen(false)
-      form.reset()
+      const token = localStorage.getItem('jwtToken');
+  
+      if (!token) {
+        console.error('Token manquant. Vous devez être connecté pour effectuer cette action.');
+        return;
+      }
+  
+      const payload = _.omit(data, 'image');
+  
+      const response = await fetch('http://localhost:5000/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      if (response.ok) {
+        setOpen(false);
+        form.reset();
+      } else {
+        const errorData = await response.json();
+        console.error('Échec de la création du produit :', errorData.message || 'Erreur inconnue');
+      }
     } catch (error) {
-      console.error(error)
+      console.error('Erreur lors de la création du produit :', error);
     }
   }
 
@@ -117,19 +138,6 @@ export function AddProductDialog() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="image"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Image URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com/image.jpg" {...field} />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import logo2 from '@/public/logo2.jpg';
 import { useGradientAnimation } from "@/hooks/use-gradient-animation";
 import { SocialIcons } from "../social-icons";
+import { LogoutButton } from "../logout-button";
 
 export function HeroSection() {
   const scrollToSection = useScrollToSection();
@@ -53,6 +54,7 @@ export function HeroSection() {
         </div>
       </div>
       <SocialIcons />
+      <LogoutButton />
     </section>
   );
 }

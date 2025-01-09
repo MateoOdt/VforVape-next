@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Navbar } from '@/components/navbar';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,7 +18,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -30,6 +30,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <SpeedInsights />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

@@ -16,9 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { connectionSchema } from "@/lib/validations/admin";
 import { ConnectionFormValues } from "@/types/admin";
+import { useRouter } from "next/navigation"
 
 export function ConnectionForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<ConnectionFormValues>({
     resolver: zodResolver(connectionSchema),
@@ -31,14 +33,32 @@ export function ConnectionForm() {
   async function onSubmit(data: ConnectionFormValues) {
     setIsLoading(true);
     try {
-      // TODO: Implement authentication logic
-      console.log(data);
+      const response = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        const token = result.token;
+  
+        localStorage.setItem('jwtToken', token);
+  
+        console.log('Logged in successfully');
+        router.push('/');
+      } else {
+        console.error('Failed to log in');
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error during login:', error);
     } finally {
       setIsLoading(false);
     }
   }
+  
 
   return (
     <div className="bg-card p-6 rounded-lg shadow-lg space-y-4">
