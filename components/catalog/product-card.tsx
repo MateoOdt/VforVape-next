@@ -7,12 +7,15 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+
+  console.log(product.image)
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="p-0">
         <div className="aspect-square relative">
           <Image
-            src={product.image}
+            src={product.image || ''}
             alt={product.name}
             fill
             className="object-cover"

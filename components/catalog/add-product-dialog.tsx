@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus } from "lucide-react"
@@ -32,8 +32,26 @@ import { categories } from "@/config/catalog"
 import type { ProductFormValues } from "@/types/catalog"
 import { productSchema } from "@/lib/validations/catalog"
 import _ from 'lodash'
+import { CatalogContext } from "./catalog-provider"
+import { useDropzone } from "react-dropzone";
+
 export function AddProductDialog() {
+  const { jwtToken, postProduct } = useContext(CatalogContext);
+
   const [open, setOpen] = useState(false)
+  const [image, setImage] = useState<File | null>(null);
+
+  const onDrop = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setImage(acceptedFiles[0]);
+    }
+  };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    maxFiles: 1,
+  });
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -43,40 +61,65 @@ export function AddProductDialog() {
       category: "",
       price: 0,
     },
-  })
-  async function onSubmit(data: ProductFormValues) {
-    console.log(data);
+  });
+
+  const handleFileUpload = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append("file", file);
   
     try {
-      const token = localStorage.getItem('jwtToken');
+      const response = await fetch("http://localhost:5000/api/files/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: formData,
+      });
   
-      if (!token) {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("File uploaded successfully:", data.url);
+      return data.url;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return null;
+    }
+  };
+  
+  const onSubmit = async (data: ProductFormValues) => {
+    if (!image) {
+      console.error('Veuillez sélectionner une image pour le produit.');
+      return;
+    }
+  
+    try {
+      const uploadedImageUrl = await handleFileUpload(image);
+  
+      if (!uploadedImageUrl) {
+        console.error("Image upload failed.");
+        return;
+      }
+  
+      if (!jwtToken) {
         console.error('Token manquant. Vous devez être connecté pour effectuer cette action.');
         return;
       }
   
-      const payload = _.omit(data, 'image');
-  
-      const response = await fetch('http://localhost:5000/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
+      await postProduct({
+        ...data,
+        image: uploadedImageUrl,
       });
   
-      if (response.ok) {
-        setOpen(false);
-        form.reset();
-      } else {
-        const errorData = await response.json();
-        console.error('Échec de la création du produit :', errorData.message || 'Erreur inconnue');
-      }
+      setOpen(false);
+      form.reset();
+      console.log("Produit créé avec succès");
     } catch (error) {
       console.error('Erreur lors de la création du produit :', error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -142,7 +185,29 @@ export function AddProductDialog() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">Add Product</Button>
+            <div>
+              <FormLabel>Image</FormLabel>
+              <div
+                {...getRootProps()}
+                className={`border-2 border-dashed p-4 text-center ${
+                  isDragActive ? "border-blue-500" : "border-gray-300"
+                }`}
+              >
+                <input {...getInputProps()} />
+                {image ? (
+                  <p>Fichier sélectionné : {image.name}</p>
+                ) : (
+                  <p>
+                    {isDragActive
+                      ? "Déposez l'image ici..."
+                      : "Glissez et déposez une image ici, ou cliquez pour sélectionner un fichier"}
+                  </p>
+                )}
+              </div>
+            </div>
+            <Button className="w-full">
+              Add Product
+            </Button>
           </form>
         </Form>
       </DialogContent>

@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { categories } from "@/config/catalog";
 import { AddProductDialog } from "./add-product-dialog";
+import { CatalogContext } from "./catalog-provider";
 
 export function CatalogHeader() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [jwt, setJwt] = useState<string | null>(null);
+  const { jwtToken, getProducts } = useContext(CatalogContext);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    setJwt(token);
-  }, []);
+    getProducts(activeCategory);
+  }, [activeCategory]);
 
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Our Products</h1>
-        {jwt && <AddProductDialog />}
+        {jwtToken && <AddProductDialog />}
       </div>
       <Tabs defaultValue="all" onValueChange={setActiveCategory}>
         <TabsList className="grid grid-cols-5 w-full max-w-2xl">
