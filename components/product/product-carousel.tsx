@@ -46,7 +46,7 @@ export function ProductCarousel({
         <CarouselContent>
           {products.map((product, index) => (
             <CarouselItem 
-              key={`${product.id}-${index}`} 
+              key={`${product._id}-${index}`} 
               className="basis-full sm:basis-1/2 lg:basis-1/4"
             >
               <ProductCard product={product} />
