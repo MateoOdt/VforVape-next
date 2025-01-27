@@ -4,12 +4,17 @@ import { Product } from "@/types/catalog";
 import { Button } from "../ui/button";
 import { CatalogContext } from "./catalog-provider";
 import { useContext } from "react";
+import { PenLine, Star, Trash2 } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
 }
 export function ProductCard({ product }: ProductCardProps) {
   const { handleDeleteProduct, jwtToken } = useContext(CatalogContext);
+
+  function handleFavoriteOption(fav: boolean) {
+    console.log('Favorite option', fav)
+  }
 
   return (
     <Card className="overflow-hidden">
@@ -24,25 +29,37 @@ export function ProductCard({ product }: ProductCardProps) {
           />
           
           {jwtToken && (
-            <Button
-              onClick={() => handleDeleteProduct(product._id)}
-              className="absolute top-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-5 h-5"
+            <>
+              <Button
+                onClick={() => handleDeleteProduct(product._id)}
+                className="absolute top-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </Button>
+                <Trash2 />
+              </Button>
+              <Button
+                onClick={() => {
+                  console.log(product)
+                }}
+                className="absolute top-14 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+              >
+                <PenLine />
+              </Button>
+              <div onClick={() => handleFavoriteOption(product.isFavorite)}>
+              {product.isFavorite ? (
+                <Button
+                  className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                >
+                  <Star className="text-white" fill="currentColor" />
+                </Button>
+              ) : (
+                <Button
+                  className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                >
+                  <Star className="text-white" stroke="currentColor" />
+                </Button>
+              )}
+              </div>
+            </>
           )}
         </div>
       </CardHeader>
