@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { ProductQuery } from '@/types/product';
 import _ from 'lodash';
 import { createContext, ReactNode, useCallback, useEffect, useState } from 'react';
@@ -59,6 +60,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   });
   const [pageProduct, setPageProduct] = useState<number>(1);
   const [currentCategory, setCurrentCategory] = useState<string>('all');
+  const { toast } = useToast();
 
   /**
    * Fetches the products from the API, optionally filtered by category
@@ -115,6 +117,9 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
         if (response.ok) {
           console.log('Product posted successfully');
           getProducts(data.category);
+          toast({
+            description: 'Votre produit à été ajouté avec succès !',
+          });
         } else {
           console.error('Failed to post product:', await response.text());
         }
@@ -137,8 +142,10 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
         });
   
         if (response.ok) {
-          console.log('Product deleted successfully');
           getProducts();
+          toast({
+            description: 'Votre produit à été supprimé avec succès !',
+          });
         } else {
           console.error('Failed to delete product:', await response.text());
         }

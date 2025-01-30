@@ -5,14 +5,16 @@ import { Button } from "../ui/button";
 import { CatalogContext } from "./catalog-provider";
 import { useContext } from "react";
 import { PenLine, Star, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
 }
 export function ProductCard({ product }: ProductCardProps) {
   const { handleDeleteProduct, jwtToken, getProducts, currentCategory } = useContext(CatalogContext);
+  const { toast } = useToast();
 
-  function handleFavoriteOption(fav: boolean, productId: string, productCat: string) {
+  function handleFavoriteOption(fav: boolean, productId: string) {
     fetch(`http://localhost:5000/products/${productId}/favorite`, {
       method: 'PATCH',
       headers: {
@@ -22,8 +24,9 @@ export function ProductCard({ product }: ProductCardProps) {
       body: JSON.stringify({ isFavorite: !fav })
     }).then(res => {
       if (res.ok) {
-        console.log('Favorite option updated', res)
         getProducts(currentCategory);
+        fav ? 
+        toast({ description: 'Produit retiré des favoris avec succès !' }) : toast({ description: 'Produit ajouté aux favoris avec succès !' })
       }
     })
   }
@@ -53,7 +56,7 @@ export function ProductCard({ product }: ProductCardProps) {
               >
                 <PenLine />
               </Button>
-              <div onClick={() => handleFavoriteOption(product?.isFavorite, product?._id, product?.category)}>
+              <div onClick={() => handleFavoriteOption(product?.isFavorite, product?._id)}>
                 {product.isFavorite ? (
                   <Button
                     className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"

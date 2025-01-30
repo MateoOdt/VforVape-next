@@ -5,6 +5,9 @@ import { ProductCarousel } from "@/components/product/product-carousel";
 import { Button } from "../ui/button";
 import { useGradientAnimation } from "@/hooks/use-gradient-animation";
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react";
+import { Product } from "@/types/catalog";
+import { useToast } from "@/hooks/use-toast";
 
 const extendedProducts = [...products, ...products, ...products].map((product, index) => ({
   ...product,
@@ -14,6 +17,32 @@ const extendedProducts = [...products, ...products, ...products].map((product, i
 export function ProductsSection() {
   const position = useGradientAnimation();
   const router = useRouter();
+  const [favProducts, setFavProducts] = useState<Array<Product>>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/products/favorites', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+  
+        if (!res.ok) {
+          throw new Error('Failed to fetch favorite products');
+        }
+  
+        const data = await res.json();
+        setFavProducts(data);
+      } catch (error) {
+        console.error('Error fetching favorite products:', error);
+      }
+    };
+  
+    fetchFavorites();
+  }, []);
 
   return (
     <section id="products" className="py-28 container-padding bg-muted/50">
@@ -27,7 +56,7 @@ export function ProductsSection() {
 
         {/* Featured Products Carousel */}
         <div className="mb-16">
-          <ProductCarousel products={extendedProducts} autoPlayInterval={3000} />
+          <ProductCarousel products={favProducts} autoPlayInterval={3000} />
         </div>
 
         {/* Button -> catalog */}
