@@ -8,10 +8,11 @@ import { CatalogContext } from "./catalog-provider";
 
 export function CatalogHeader() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const { jwtToken, getProducts } = useContext(CatalogContext);
+  const { jwtToken, getProducts, setCurrentCategory } = useContext(CatalogContext);
 
   useEffect(() => {
     getProducts(activeCategory);
+    setCurrentCategory(activeCategory);
   }, [activeCategory]);
 
   return (

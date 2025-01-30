@@ -10,10 +10,22 @@ interface ProductCardProps {
   product: Product;
 }
 export function ProductCard({ product }: ProductCardProps) {
-  const { handleDeleteProduct, jwtToken } = useContext(CatalogContext);
+  const { handleDeleteProduct, jwtToken, getProducts, currentCategory } = useContext(CatalogContext);
 
-  function handleFavoriteOption(fav: boolean) {
-    console.log('Favorite option', fav)
+  function handleFavoriteOption(fav: boolean, productId: string, productCat: string) {
+    fetch(`http://localhost:5000/products/${productId}/favorite`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwtToken}`
+      },
+      body: JSON.stringify({ isFavorite: !fav })
+    }).then(res => {
+      if (res.ok) {
+        console.log('Favorite option updated', res)
+        getProducts(currentCategory);
+      }
+    })
   }
 
   return (
@@ -37,27 +49,24 @@ export function ProductCard({ product }: ProductCardProps) {
                 <Trash2 />
               </Button>
               <Button
-                onClick={() => {
-                  console.log(product)
-                }}
                 className="absolute top-14 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
               >
                 <PenLine />
               </Button>
-              <div onClick={() => handleFavoriteOption(product.isFavorite)}>
-              {product.isFavorite ? (
-                <Button
-                  className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                >
-                  <Star className="text-white" fill="currentColor" />
-                </Button>
-              ) : (
-                <Button
-                  className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-                >
-                  <Star className="text-white" stroke="currentColor" />
-                </Button>
-              )}
+              <div onClick={() => handleFavoriteOption(product?.isFavorite, product?._id, product?.category)}>
+                {product.isFavorite ? (
+                  <Button
+                    className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  >
+                    <Star className="text-white" fill="currentColor" />
+                  </Button>
+                ) : (
+                  <Button
+                    className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                  >
+                    <Star className="text-white" stroke="currentColor" />
+                  </Button>
+                )}
               </div>
             </>
           )}

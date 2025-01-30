@@ -13,6 +13,8 @@ export const CatalogContext = createContext<{
   pageProduct: number;
   setPageProduct: (limitProduct: number) => void;
   handleDeleteProduct: (id: string) => void;
+  currentCategory: string;
+  setCurrentCategory: (category: string) => void;
 }>({
   jwtToken: null,
   setJwtToken: () => {},
@@ -33,6 +35,8 @@ export const CatalogContext = createContext<{
   pageProduct: 1,
   setPageProduct: () => {},
   handleDeleteProduct: () => {},
+  currentCategory: 'all',
+  setCurrentCategory: () => {},
 });
 
 type CatalogProviderProps = {
@@ -54,6 +58,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
     nextPage: null,
   });
   const [pageProduct, setPageProduct] = useState<number>(1);
+  const [currentCategory, setCurrentCategory] = useState<string>('all');
 
   /**
    * Fetches the products from the API, optionally filtered by category
@@ -152,7 +157,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   }, []);
 
   return (
-    <CatalogContext.Provider value={{ jwtToken, setJwtToken, products, postProduct, getProducts, pageProduct, setPageProduct, handleDeleteProduct }}>
+    <CatalogContext.Provider value={{ jwtToken, setJwtToken, products, postProduct, getProducts, pageProduct, setPageProduct, handleDeleteProduct, currentCategory, setCurrentCategory }}>
       {children}
     </CatalogContext.Provider>
   );

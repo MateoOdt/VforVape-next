@@ -13,6 +13,7 @@ export interface Product {
   price: number
   category: string
   image: string
+  isFavorite: boolean;
 }
 
 export type ProductFormValues = z.infer<typeof productSchema>
