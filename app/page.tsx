@@ -4,6 +4,7 @@ import { AboutSection } from "@/components/sections/about-section";
 import { ContactSection } from "@/components/sections/contact-section";
 
 export default function Home() {
+
   return (
     <main className="overflow-hidden">
       <HeroSection />

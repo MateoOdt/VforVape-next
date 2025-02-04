@@ -1,29 +1,21 @@
 "use client";
 
-import { products } from "@/config/products";
 import { ProductCarousel } from "@/components/product/product-carousel";
 import { Button } from "../ui/button";
 import { useGradientAnimation } from "@/hooks/use-gradient-animation";
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 import { Product } from "@/types/catalog";
-import { useToast } from "@/hooks/use-toast";
-
-const extendedProducts = [...products, ...products, ...products].map((product, index) => ({
-  ...product,
-  id: index + 1,
-}));
 
 export function ProductsSection() {
   const position = useGradientAnimation();
   const router = useRouter();
   const [favProducts, setFavProducts] = useState<Array<Product>>([]);
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const res = await fetch('http://localhost:5000/products/favorites', {
+        const res = await fetch(`${process.env.API_URL}/products/favorites`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

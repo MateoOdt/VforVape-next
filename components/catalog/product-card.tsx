@@ -13,9 +13,8 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { handleDeleteProduct, jwtToken, getProducts, currentCategory } = useContext(CatalogContext);
   const { toast } = useToast();
-
   function handleFavoriteOption(fav: boolean, productId: string) {
-    fetch(`http://localhost:5000/products/${productId}/favorite`, {
+    fetch(`${process.env.API_URL}/products/${productId}/favorite`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

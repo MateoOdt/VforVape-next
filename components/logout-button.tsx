@@ -16,7 +16,7 @@ export function LogoutButton() {
   const [jwt, setJwt] = useState<string | null>(null);
 
   function handleLogout() {
-    fetch('http://localhost:5000/auth/logout', {
+    fetch(`${process.env.API_URL}/auth/logout`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,

@@ -66,9 +66,8 @@ export function AddProductDialog() {
   const handleFileUpload = async (file: File): Promise<string | null> => {
     const formData = new FormData();
     formData.append("file", file);
-  
     try {
-      const response = await fetch("http://localhost:5000/api/files/upload", {
+      const response = await fetch(`${process.env.API_URL}/api/files/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwtToken}`,
