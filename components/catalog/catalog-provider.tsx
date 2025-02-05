@@ -11,6 +11,7 @@ export const CatalogContext = createContext<{
   products: ProductQuery;
   postProduct: (data: any) => Promise<void>;
   getProducts: (category?: string) => void;
+  patchProduct: (id: string, data: any) => void;
   pageProduct: number;
   setPageProduct: (limitProduct: number) => void;
   handleDeleteProduct: (id: string) => void;
@@ -33,6 +34,7 @@ export const CatalogContext = createContext<{
   },
   postProduct: async () => {},
   getProducts: () => {},
+  patchProduct: async () => {},
   pageProduct: 1,
   setPageProduct: () => {},
   handleDeleteProduct: () => {},
@@ -130,6 +132,36 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
     [jwtToken, getProducts]
   );
 
+  const patchProduct = useCallback(
+    async (id: string, data: any) => {
+      try {
+        ///${process.env.API_URL}
+      
+        const response = await fetch(`http://localhost:5000/products/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(data),
+        });
+  
+        if (response.ok) {
+          console.log('Product patched successfully');
+          getProducts();
+          toast({
+            description: 'Votre produit à été modifié avec succès !',
+          });
+        } else {
+          console.error('Failed to patch product:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error patching product:', error);
+      }
+    },
+    [jwtToken, getProducts]
+  );
+
   const handleDeleteProduct = useCallback(
     async (id: string) => {
       try {
@@ -164,7 +196,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   }, []);
 
   return (
-    <CatalogContext.Provider value={{ jwtToken, setJwtToken, products, postProduct, getProducts, pageProduct, setPageProduct, handleDeleteProduct, currentCategory, setCurrentCategory }}>
+    <CatalogContext.Provider value={{ jwtToken, setJwtToken, products, postProduct, getProducts, pageProduct, setPageProduct, handleDeleteProduct, currentCategory, setCurrentCategory, patchProduct }}>
       {children}
     </CatalogContext.Provider>
   );

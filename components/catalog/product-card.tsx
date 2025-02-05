@@ -6,6 +6,7 @@ import { CatalogContext } from "./catalog-provider";
 import { useContext } from "react";
 import { PenLine, Star, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { EditProductDialog } from "./edit-product-dialog";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { handleDeleteProduct, jwtToken, getProducts, currentCategory } = useContext(CatalogContext);
   const { toast } = useToast();
+  
   function handleFavoriteOption(fav: boolean, productId: string) {
     fetch(`${process.env.API_URL}/products/${productId}/favorite`, {
       method: 'PATCH',
@@ -50,15 +52,11 @@ export function ProductCard({ product }: ProductCardProps) {
               >
                 <Trash2 />
               </Button>
-              <Button
-                className="absolute top-14 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
-              >
-                <PenLine />
-              </Button>
+              <EditProductDialog product={product} />
               <div onClick={() => handleFavoriteOption(product?.isFavorite, product?._id)}>
                 {product.isFavorite ? (
                   <Button
-                    className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="absolute bottom-2 right-2 bg-orange-500 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                   >
                     <Star className="text-white" fill="currentColor" />
                   </Button>
