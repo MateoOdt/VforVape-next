@@ -6,7 +6,7 @@ import { CatalogContext } from "./catalog-provider";
 import { useContext } from "react";
 import { PenLine, Star, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { EditProductDialog } from "./edit-product-dialog";
+import { ProductDialog } from "./edit-product-dialog";
 
 interface ProductCardProps {
   product: Product;
@@ -52,17 +52,17 @@ export function ProductCard({ product }: ProductCardProps) {
               >
                 <Trash2 />
               </Button>
-              <EditProductDialog product={product} />
+              <ProductDialog product={product} />
               <div onClick={() => handleFavoriteOption(product?.isFavorite, product?._id)}>
                 {product.isFavorite ? (
                   <Button
-                    className="absolute bottom-2 right-2 bg-orange-500 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="absolute bottom-2 right-2 bg-orange-500 text-white p-2 rounded-full hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                   >
                     <Star className="text-white" fill="currentColor" />
                   </Button>
                 ) : (
                   <Button
-                    className="absolute bottom-2 right-2 bg-red-700 text-white p-2 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="absolute bottom-2 right-2 bg-orange-500 text-white p-2 rounded-full hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-red-400"
                   >
                     <Star className="text-white" stroke="currentColor" />
                   </Button>

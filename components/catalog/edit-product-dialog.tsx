@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PenLine } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,31 +29,49 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { categories } from "@/config/catalog";
-import type { Product, ProductFormValues } from "@/types/catalog";
+import type { ProductFormValues } from "@/types/catalog";
 import { productSchema } from "@/lib/validations/catalog";
-import { useDropzone } from "react-dropzone";
-import Image from "next/image";
 import { CatalogContext } from "./catalog-provider";
-import { isString, set } from "lodash";
+import { useDropzone } from "react-dropzone";
 
-interface ProductCardProps {
-  product: Product;
-}
-
-export function EditProductDialog({ product }: ProductCardProps) {
+export function ProductDialog({ product }: any) {
   const { jwtToken, patchProduct } = useContext(CatalogContext);
-
-  const [image, setImage] = useState<string | File | null>(product?.image || null);
   const [open, setOpen] = useState(false);
-  const [isHoverImg, setIsHoverImg] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState(product.image);
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       setImage(acceptedFiles[0]);
+      setExistingImageUrl(null);
     }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const handleDeleteImage = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (existingImageUrl) {
+      try {
+        const response = await fetch(`${process.env.API_URL}/api/files/delete`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({ fileUrl: existingImageUrl }),
+        });
+
+        if (response.ok) {
+          setExistingImageUrl(null);
+        }
+      } catch (error) {
+        console.error("Error deleting image:", error);
+      }
+    } else {
+      setImage(null);
+    }
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     maxFiles: 1,
@@ -68,20 +86,6 @@ export function EditProductDialog({ product }: ProductCardProps) {
       price: product.price,
     },
   });
-
-  const watchAllFields = form.watch();
-  const [isDirty, setIsDirty] = useState(false);
-
-  useEffect(() => {
-    const hasChanges =
-      watchAllFields.name !== product.name ||
-      watchAllFields.description !== product.description ||
-      watchAllFields.category !== product.category ||
-      watchAllFields.price !== product.price ||
-      image !== product.image || image !== null;
-
-    setIsDirty(hasChanges);
-  }, [watchAllFields, image, product]);
 
   const handleFileUpload = async (file: File): Promise<string | null> => {
     const formData = new FormData();
@@ -108,166 +112,146 @@ export function EditProductDialog({ product }: ProductCardProps) {
     }
   };
 
-  const handleDeleteImage = (event: React.MouseEvent) => {
-    event.stopPropagation();
-
-    fetch(`${process.env.API_URL}/api/files/delete`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`,
-      },
-      body: JSON.stringify({ fileUrl: product.image }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          setImage(null);
-        }
-      })
-      .catch((error) => {
-        console.error('Error deleting image:', error);
-      });
-  };
-
   const onSubmit = async (data: ProductFormValues) => {
-    if (!image) {
-      console.error('Veuillez sélectionner une image pour le produit.');
-      return;
-    }
-
     try {
-      if (image instanceof File) {
+      let imageUrl = existingImageUrl;
+      
+      if (image) {
         const uploadedImageUrl = await handleFileUpload(image);
         if (!uploadedImageUrl) {
           console.error("Image upload failed.");
           return;
         }
-        data.image = uploadedImageUrl;
-      } else if (isString(image)) {
-        data.image = image;
+        imageUrl = uploadedImageUrl;
       }
 
-      await patchProduct(product._id, data);
+      if (!jwtToken) {
+        console.error('Token missing. You must be logged in.');
+        return;
+      }
+
+      await patchProduct(product._id, {
+        ...data,
+        image: imageUrl,
+      });
+
+      setOpen(false);
       form.reset();
+      setImage(null);
+      setExistingImageUrl(null);
+      console.log("Product updated successfully");
     } catch (error) {
       console.error('Error updating product:', error);
     }
   };
 
+  useEffect(() => {
+    if (product) {
+      setExistingImageUrl(product.image);
+      form.reset({
+        name: product.name,
+        description: product.description,
+        category: product.category,
+        price: product.price,
+      });
+    }
+  }, [product, open]);
+
+  useEffect(() => {
+    if (!open) {
+      setImage(null);
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="absolute top-14 right-2 bg-blue-700 text-white p-2 rounded-full hover:bg-blue-600">
-          <PenLine />
+        <Button className="gap-2 absolute top-16 right-2 bg-blue-700 text-white p-2 w-10 rounded-full hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-red-400">
+          <Pencil className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Modifier le produit</DialogTitle>
+          <DialogTitle>Edit Product</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField control={form.control} name="name" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nom</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
-            <FormField control={form.control} name="description" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
-            <FormField control={form.control} name="category" render={({ field }) => (
-              <FormItem>
-                <FormLabel>Catégorie</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner une catégorie" />
-                    </SelectTrigger>
+                    <Input placeholder="Product Name" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Product Description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div>
               <FormLabel>Image</FormLabel>
-              <div style={{ marginTop: 12 }}>
-                {image && isString(image) ? (
-                  <>
-                    <div
-                      onMouseEnter={() => setIsHoverImg(true)}
-                      onMouseLeave={() => setIsHoverImg(false)}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        position: 'relative',
-                        height: 100,
-                        width: 100,
-                      }}
+              <div {...getRootProps()} className="border-2 border-dashed p-4 text-center cursor-pointer">
+                <input {...getInputProps()} />
+                {existingImageUrl ? (
+                  <div className="relative">
+                    <img src={existingImageUrl} alt="Current" className="h-20 w-20 mx-auto" />
+                    <Button
+                      type="button"
+                      onClick={handleDeleteImage}
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
                     >
-                      <Image
-                        src={image}
-                        alt={product.name}
-                        width={100}
-                        height={100}
-                        className="rounded-md"
-                        style={{
-                          display: 'block',
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                        }}
-                      />
-                      {isHoverImg && (
-                        <button
-                          className="absolute top-1 right-1 bg-red-600 text-white w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 z-10"
-                          onClick={(e) => handleDeleteImage(e)}
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
-                  </>
-                ) : image instanceof File ? (
-                  <div
-                    {...getRootProps()}
-                    className={`border-2 border-dashed p-4 text-center ${isDragActive ? "border-blue-500" : "border-gray-300"}`}
-                  >
-                    <input {...getInputProps()} />
-                    <p>Fichier sélectionné : {image.name}</p>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
+                ) : image ? (
+                  <p>{image.name}</p>
                 ) : (
-                  <div
-                    {...getRootProps()}
-                    className={`border-2 border-dashed p-4 text-center ${isDragActive ? "border-blue-500" : "border-gray-300"}`}
-                  >
-                    <input {...getInputProps()} />
-                    <p>Glissez et déposez une image ici, ou cliquez pour sélectionner un fichier</p>
-                  </div>
+                  <p>Drag & drop an image, or click to select one</p>
                 )}
               </div>
             </div>
-            <Button className="w-full" disabled={!isDirty || image === null}>Modifier le produit</Button>
+            <Button className="w-full">Update Product</Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
