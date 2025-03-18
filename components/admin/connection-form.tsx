@@ -17,10 +17,12 @@ import { Input } from "@/components/ui/input";
 import { connectionSchema } from "@/lib/validations/admin";
 import { ConnectionFormValues } from "@/types/admin";
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast";
 
 export function ConnectionForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<ConnectionFormValues>({
     resolver: zodResolver(connectionSchema),
@@ -47,9 +49,14 @@ export function ConnectionForm() {
   
         localStorage.setItem('jwtToken', token);
   
-        console.log('Logged in successfully');
+        toast({
+          description: 'Connecté avec succès !',
+        })
         router.push('/');
       } else {
+        toast({
+          description: "Identifiants incorrects, veuillez réessayer",
+        })
         console.error('Failed to log in');
       }
     } catch (error) {
