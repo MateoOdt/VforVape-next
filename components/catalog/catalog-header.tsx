@@ -18,12 +18,12 @@ export function CatalogHeader() {
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Our Products</h1>
+        <h1 className="text-3xl font-bold">Nos produits</h1>
         {jwtToken && <AddProductDialog />}
       </div>
       <Tabs defaultValue="all" onValueChange={setActiveCategory}>
         <TabsList className="grid grid-cols-5 w-full max-w-2xl">
-          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="all">Tous</TabsTrigger>
           {categories.map((category) => (
             <TabsTrigger key={category.id} value={category.id}>
               {category.name}
