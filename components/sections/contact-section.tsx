@@ -4,26 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin } from "lucide-react";
-import { MapContainer, TileLayer, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
-import L from 'leaflet';
-import { Marker } from 'react-leaflet'; // Correct import
-import MarkerPinRed from '@/assets/MarkerPinRed.png'
 import { motion } from "framer-motion";
-
-const token = 're_1AD47oz2_66mXJ5jKb2HQ2uYt6jaCbfvW'; // Your MailerSend API key
-
-const customIcon = new L.Icon({
-  iconUrl: MarkerPinRed.src, // Extracting the URL correctly
-  iconSize: [26, 32], // Icon size
-  iconAnchor: [16, 32], // Icon anchor point (usually center of the icon)
-  popupAnchor: [0, -32], // Popup anchor (adjust this based on where the popup appears)
-});
+import ContactMap from "../map-container";
 
 export function ContactSection() {
-
-  const position: LatLngExpression = [49.0355598, 2.7979564]; // Latitude & Longitude for Saint-Soupplets
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +32,6 @@ export function ContactSection() {
      */
 
     // Set up the email data to send
-   
   };
 
   return (
@@ -99,12 +83,7 @@ export function ContactSection() {
                   <h3 className="font-semibold mb-1">Adresse</h3>
                 </div>
               </div>
-              <MapContainer center={position} zoom={13} style={{ height: "200px", width: "100%", borderRadius: '4px', marginTop: '15px' }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={position} icon={customIcon}>
-                  <Popup>2 rue du 5 Septembre 1914, Saint-Soupplets 77165</Popup>
-                </Marker>
-              </MapContainer>
+              <ContactMap />
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6 bg-background p-6 sm:p-8 rounded-xl shadow-md">
