@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Building2, Award, Shield, Users } from "lucide-react";
 
 const features = [
@@ -27,28 +28,44 @@ const features = [
 
 export function AboutSection() {
   return (
-    <section id="about" className="py-32 container-padding bg-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold">À propos</h2>
-          <p className="text-lg sm:text-xl text-muted-foreground">
-            Nous sommes passionnés par l'idée d'offrir la meilleure expérience de vapotage grâce à des produits de qualité et un service exceptionnel.
-          </p>
+    <motion.div
+      initial={{
+        opacity: 0,
+      }}
+      whileInView={{
+        opacity: 1,
+      }}
+      viewport={{
+        margin: '-150px'
+      }}
+      transition={{
+        duration: 0.6,
+      }}
+      className="bg-black"
+    >
+      <section id="about" className="py-32 container-padding bg-background">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold">À propos</h2>
+            <p className="text-lg sm:text-xl text-muted-foreground">
+              Nous sommes passionnés par l'idée d'offrir la meilleure expérience de vapotage grâce à des produits de qualité et un service exceptionnel.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {features.map((feature, index) => (
+              <div 
+                key={index} 
+                className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+              >
+                <feature.icon className="h-12 w-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="bg-card rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-            >
-              <feature.icon className="h-12 w-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+      </section>
+    </motion.div>
   );
 }
