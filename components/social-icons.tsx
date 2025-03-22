@@ -13,7 +13,7 @@ import Image from "next/image";
 
 export function SocialIcons() {
   return (
-    <div className="fixed bottom-8 left-8 flex flex-col gap-4">
+    <div className="fixed bottom-8 left-8 flex flex-col gap-4 z-[9999]">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
