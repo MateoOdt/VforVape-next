@@ -47,9 +47,7 @@ export function HeroSection() {
       whileInView={{
         opacity: 1,
       }}
-      viewport={{
-        margin: '-300px'
-      }}
+      viewport={{ once: true, amount: 0.1 }}
       transition={{
         duration: 0.6,
       }}
