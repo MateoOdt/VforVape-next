@@ -13,24 +13,6 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    /**
-     * 
-    const name = (e.target as any).name.value;
-    const email = (e.target as HTMLFormElement).email.value;
-    const message = (e.target as HTMLFormElement).message.value;
-
-    const resend = new Resend('re_1AD47oz2_66mXJ5jKb2HQ2uYt6jaCbfvW');
-
-    resend.emails.send({
-      from: email,
-      to: 'mateo@bamptee.com',
-      subject: 'Hello World',
-      html: '<p>Congrats on sending your <strong>first email</strong>!</p>'
-    });
-    
-    console.log(name, email, message);
-     */
-
     // Set up the email data to send
   };
 
