@@ -10,7 +10,7 @@ export const CatalogContext = createContext<{
   setJwtToken: (_jwtToken: string) => void;
   products: ProductQuery;
   postProduct: (data: any) => Promise<void>;
-  getProducts: (category?: string) => void;
+  getProducts: (category?: string, search?: string) => void;
   patchProduct: (id: string, data: any) => void;
   pageProduct: number;
   setPageProduct: (limitProduct: number) => void;
@@ -67,12 +67,15 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   /**
    * Fetches the products from the API, optionally filtered by category
    */ 
-  const getProducts = useCallback((category?: string) => {
+  const getProducts = useCallback((category?: string, search?: string) => {
     const url = new URL(`${process.env.API_URL}/products`);
     
     // Add query parameters
     if (category && category !== "all") {
       url.searchParams.append('category', category);
+    }
+    if (search) {
+      url.searchParams.append('search', search);
     }
     url.searchParams.append('page', String(pageProduct));
   
