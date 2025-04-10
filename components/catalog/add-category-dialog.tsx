@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { CatalogContext } from "./catalog-provider"
-import { useToast } from "@/hooks/use-toast"
 import { z } from "zod"
 
 const categorySchema = z.object({
@@ -32,9 +31,8 @@ const categorySchema = z.object({
 type CategoryFormValues = z.infer<typeof categorySchema>
 
 export function AddCategoryDialog() {
-  const { jwtToken } = useContext(CatalogContext)
+  const { jwtToken, postCategory } = useContext(CatalogContext)
   const [open, setOpen] = useState(false)
-  const { toast } = useToast()
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -44,33 +42,9 @@ export function AddCategoryDialog() {
   })
 
   const onSubmit = async (data: CategoryFormValues) => {
-    try {
-      const response = await fetch(`${process.env.API_URL}/categories`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'ajout de la catégorie")
-      }
-
-      toast({
-        title: "Succès",
-        description: "La catégorie a été ajoutée avec succès",
-      })
-      setOpen(false)
-      form.reset()
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout de la catégorie",
-        variant: "destructive",
-      })
-    }
+    await postCategory(data);
+    setOpen(false);
+    form.reset();
   }
 
   return (

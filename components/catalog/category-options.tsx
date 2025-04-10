@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
 import { CatalogContext } from "./catalog-provider"
 import { useContext } from "react"
 
@@ -30,65 +29,18 @@ export function CategoryOptions({ categoryId, categoryName }: CategoryOptionsPro
   const [renameOpen, setRenameOpen] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [newName, setNewName] = useState(categoryName)
-  const { toast } = useToast()
-  const { jwtToken } = useContext(CatalogContext)
+  const { patchCategory, handleDeleteCategory } = useContext(CatalogContext)
 
   const handleRename = async () => {
     setRenameOpen(false);
 
-    try {
-      const response = await fetch(`${process.env.API_URL}/categories/${categoryId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({ name: newName }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Erreur lors du renommage de la catégorie")
-      }
-
-      toast({
-        title: "Succès",
-        description: "La catégorie a été renommée avec succès",
-      })
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors du renommage de la catégorie",
-        variant: "destructive",
-      })
-    }
+    await patchCategory(categoryId, { name: newName });
   }
 
   const handleDelete = async () => {
     setDeleteOpen(false);
 
-    try {
-      const response = await fetch(`${process.env.API_URL}/categories/${categoryId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de la catégorie")
-      }
-
-      toast({
-        title: "Succès",
-        description: "La catégorie a été supprimée avec succès",
-      })
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression de la catégorie",
-        variant: "destructive",
-      })
-    }
+    await handleDeleteCategory(categoryId);
   }
 
   return (

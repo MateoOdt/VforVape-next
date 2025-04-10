@@ -28,7 +28,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { categories } from "@/config/catalog"
 import type { ProductFormValues } from "@/types/catalog"
 import { productSchema } from "@/lib/validations/catalog"
 import _ from 'lodash'
@@ -36,7 +35,9 @@ import { CatalogContext } from "./catalog-provider"
 import { useDropzone } from "react-dropzone";
 
 export function AddProductDialog() {
-  const { jwtToken, postProduct } = useContext(CatalogContext);
+  const { jwtToken, postProduct, categories } = useContext(CatalogContext);
+
+  console.log(categories);
 
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState<File | null>(null);
@@ -120,6 +121,10 @@ export function AddProductDialog() {
     }
   };
 
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -174,8 +179,8 @@ export function AddProductDialog() {
                     </FormControl>
                     <SelectContent>
                       {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
+                        <SelectItem key={category._id} value={category._id}>
+                          {capitalizeFirstLetter(category.name)}
                         </SelectItem>
                       ))}
                     </SelectContent>

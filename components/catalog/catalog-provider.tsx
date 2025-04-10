@@ -17,6 +17,12 @@ export const CatalogContext = createContext<{
   handleDeleteProduct: (id: string) => void;
   currentCategory: string;
   setCurrentCategory: (category: string) => void;
+  getCategories: () => Promise<any[]>;
+  categories: any[];
+  setCategories: (categories: any[]) => void;
+  postCategory: (data: any) => Promise<void>;
+  patchCategory: (id: string, data: any) => Promise<void>;
+  handleDeleteCategory: (id: string) => Promise<void>;
 }>({
   jwtToken: null,
   setJwtToken: () => {},
@@ -40,6 +46,12 @@ export const CatalogContext = createContext<{
   handleDeleteProduct: () => {},
   currentCategory: 'all',
   setCurrentCategory: () => {},
+  getCategories: async () => [],
+  categories: [],
+  setCategories: () => {},
+  postCategory: async () => {},
+  patchCategory: async () => {},
+  handleDeleteCategory: async () => {},
 });
 
 type CatalogProviderProps = {
@@ -62,13 +74,14 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   });
   const [pageProduct, setPageProduct] = useState<number>(1);
   const [currentCategory, setCurrentCategory] = useState<string>('all');
+  const [categories, setCategories] = useState<any[]>([]);
   const { toast } = useToast();
 
   /**
    * Fetches the products from the API, optionally filtered by category
    */ 
   const getProducts = useCallback((category?: string, search?: string) => {
-    const url = new URL(`${process.env.API_URL}/products`);
+    const url = new URL(`http://localhost:5000/products`);
     
     // Add query parameters
     if (category && category !== "all") {
@@ -110,7 +123,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
           image: data.image,
         };
 
-        const response = await fetch(`${process.env.API_URL}/products`, {
+        const response = await fetch(`http://localhost:5000/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -120,7 +133,6 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
         });
   
         if (response.ok) {
-          console.log('Product posted successfully');
           getProducts(data.category);
           toast({
             description: 'Votre produit à été ajouté avec succès !',
@@ -198,8 +210,111 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
     }
   }, []);
 
+  /// Categories
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/category`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setCategories(data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+  }, []);
+
+  const postCategory = useCallback(async (data: any) => {
+    const response = await fetch(`http://localhost:5000/category`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      getCategories();
+      toast({
+        description: 'Votre catégorie à été ajoutée avec succès !',
+      });
+    } else {
+      console.error('Failed to post category:', await response.text());
+      toast({
+        description: 'Une erreur est survenue lors de l\'ajout de la catégorie',
+      });
+    }
+  }, [getCategories, jwtToken]);
+
+  const patchCategory = useCallback(async (id: string, data: any) => {
+    const response = await fetch(`http://localhost:5000/category/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      getCategories();
+      toast({
+        description: 'Votre catégorie à été modifiée avec succès !',
+      });
+    } else {
+      console.error('Failed to patch category:', await response.text());
+      toast({
+        description: 'Une erreur est survenue lors de la modification de la catégorie',
+      });
+    }
+  }, [getCategories, jwtToken]);
+
+  const handleDeleteCategory = useCallback(async (id: string) => {
+    const response = await fetch(`http://localhost:5000/category/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+    if (response.ok) {
+      getCategories();
+      toast({
+        description: 'Votre catégorie à été supprimée avec succès !',
+      });
+    } else {
+      console.error('Failed to delete category:', await response.text());
+      toast({
+        description: 'Une erreur est survenue lors de la suppression de la catégorie',
+      });
+    }
+  }, [getCategories, jwtToken]);
+
   return (
-    <CatalogContext.Provider value={{ jwtToken, setJwtToken, products, postProduct, getProducts, pageProduct, setPageProduct, handleDeleteProduct, currentCategory, setCurrentCategory, patchProduct }}>
+    <CatalogContext.Provider 
+      value={{ 
+        jwtToken, 
+        setJwtToken, 
+        products, 
+        postProduct, 
+        getProducts, 
+        pageProduct, 
+        setPageProduct, 
+        handleDeleteProduct, 
+        currentCategory, 
+        setCurrentCategory, 
+        patchProduct, 
+        getCategories,
+        categories,
+        setCategories,
+        postCategory,
+        patchCategory,
+        handleDeleteCategory
+      }}
+    >
       {children}
     </CatalogContext.Provider>
   );
