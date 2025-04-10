@@ -86,7 +86,7 @@ export function CatalogHeader() {
               <div className="flex-1">
                 <TabsList className="grid grid-cols-4 gap-2 w-full h-13">
                   <TabsTrigger value="all" className="h-10">
-                    <span>Tous</span>
+                    <span>All</span>
                   </TabsTrigger>
                   {visibleCategories.map((category) => (
                     <div key={category._id} className="relative group">

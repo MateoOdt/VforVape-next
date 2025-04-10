@@ -81,7 +81,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
    * Fetches the products from the API, optionally filtered by category
    */ 
   const getProducts = useCallback((category?: string, search?: string) => {
-    const url = new URL(`http://localhost:5000/products`);
+    const url = new URL(`${process.env.API_URL}/products`);
     
     // Add query parameters
     if (category && category !== "all") {
@@ -123,7 +123,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
           image: data.image,
         };
 
-        const response = await fetch(`http://localhost:5000/products`, {
+        const response = await fetch(`${process.env.API_URL}/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
       try {
         ///${process.env.API_URL}
       
-        const response = await fetch(`http://localhost:5000/products/${id}`, {
+        const response = await fetch(`${process.env.API_URL}/products/${id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   /// Categories
   const getCategories = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:5000/category`, {
+      const response = await fetch(`${process.env.API_URL}/category`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -229,7 +229,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   }, []);
 
   const postCategory = useCallback(async (data: any) => {
-    const response = await fetch(`http://localhost:5000/category`, {
+    const response = await fetch(`${process.env.API_URL}/category`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -251,7 +251,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   }, [getCategories, jwtToken]);
 
   const patchCategory = useCallback(async (id: string, data: any) => {
-    const response = await fetch(`http://localhost:5000/category/${id}`, {
+    const response = await fetch(`${process.env.API_URL}/category/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   }, [getCategories, jwtToken]);
 
   const handleDeleteCategory = useCallback(async (id: string) => {
-    const response = await fetch(`http://localhost:5000/category/${id}`, {
+    const response = await fetch(`${process.env.API_URL}/category/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
