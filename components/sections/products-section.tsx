@@ -51,7 +51,7 @@ export function ProductsSection() {
       transition={{
         duration: 0.6,
       }}
-      className="bg-black"
+      className="bg-muted/50"
     >
       <section id="products" className="py-28 container-padding bg-muted/50">
         <div className="max-w-7xl mx-auto">
