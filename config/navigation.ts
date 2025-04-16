@@ -12,6 +12,10 @@ export const navItems = [
     label: 'À propos',
   },
   {
+    id: 'shop',
+    label: 'Boutique',
+  },
+  {
     id: 'contact',
     label: 'Contact',
   },

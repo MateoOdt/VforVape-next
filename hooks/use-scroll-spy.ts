@@ -8,26 +8,31 @@ export function useScrollSpy(sectionIds: string[], offset: number = 100) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + offset;
+      const viewportHeight = window.innerHeight;
 
-      // Special case for the top of the page
       if (scrollPosition < 100) {
         setActiveSection("home");
         return;
       }
 
-      // Find the last section that has been scrolled past
       const currentSection = sectionIds
         .map((id) => {
           const element = document.getElementById(id);
           if (!element) return null;
+          const rect = element.getBoundingClientRect();
+          const elementTop = rect.top + window.pageYOffset;
+          
+          const isActive = elementTop <= scrollPosition + (viewportHeight * 0.3);
+
           return {
             id,
-            offset: element.offsetTop,
+            isActive,
+            top: elementTop
           };
         })
-        .filter((item): item is { id: string; offset: number } => item !== null)
-        .reverse()
-        .find((item) => scrollPosition >= item.offset);
+        .filter((item): item is { id: string; isActive: boolean; top: number } => item !== null)
+        .sort((a, b) => b.top - a.top)
+        .find(item => item.isActive);
 
       if (currentSection) {
         setActiveSection(currentSection.id);
@@ -35,7 +40,7 @@ export function useScrollSpy(sectionIds: string[], offset: number = 100) {
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
+    handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, [sectionIds, offset]);

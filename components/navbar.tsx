@@ -53,7 +53,10 @@ export function Navbar() {
         <div className="fixed w-full z-50 px-4 py-4">
           <nav className="max-w-7xl mx-auto bg-background/90 backdrop-blur-sm border border-border rounded-2xl px-6 shadow-lg">
             <div className="flex justify-between h-16 items-center">
-              <Image src={Logo} alt="logo" width={70} />
+              <Image src={Logo} alt="logo" width={70} onClick={() => {
+                handleSectionClick("home");
+                scrollToSection("home");
+              }} className="cursor-pointer" />
   
               {/* Desktop Navigation */}
               <div className="hidden md:flex items-center space-x-8">
