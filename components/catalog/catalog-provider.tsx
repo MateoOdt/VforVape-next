@@ -81,7 +81,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
    * Fetches the products from the API, optionally filtered by category ${process.env.API_URL}
    */ 
   const getProducts = useCallback((category?: string, search?: string) => {
-    const url = new URL(`http://localhost:5000/products`);
+    const url = new URL(`${process.env.API_URL}/products`);
     
     // Add query parameters
     if (category && category !== "all") {
@@ -123,7 +123,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
           image: data.image,
         };
 
-        const response = await fetch(`http://localhost:5000/products`, {
+        const response = await fetch(`${process.env.API_URL}/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -150,9 +150,8 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   const patchProduct = useCallback(
     async (id: string, data: any) => {
       try {
-        ///${process.env.API_URL}
       
-        const response = await fetch(`http://localhost:5000/products/${id}`, {
+        const response = await fetch(`${process.env.API_URL}/products/${id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
