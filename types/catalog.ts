@@ -11,7 +11,7 @@ export interface Product {
   name: string
   description: string
   price: number
-  category: string
+  category: string[]
   image: string
   isFavorite: boolean;
 }

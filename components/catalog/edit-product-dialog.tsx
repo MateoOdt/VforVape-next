@@ -20,22 +20,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { categories } from "@/config/catalog";
+import { CatalogContext } from "./catalog-provider";
 import type { ProductFormValues } from "@/types/catalog";
 import { productSchema } from "@/lib/validations/catalog";
-import { CatalogContext } from "./catalog-provider";
 import { useDropzone } from "react-dropzone";
 
 export function ProductDialog({ product }: any) {
-  const { jwtToken, patchProduct } = useContext(CatalogContext);
+  const { jwtToken, patchProduct, categories, setCurrentCategory } = useContext(CatalogContext);
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState(product.image);
@@ -80,10 +73,10 @@ export function ProductDialog({ product }: any) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: product.name,
-      description: product.description,
-      category: product.category,
-      price: product.price,
+      name: product?.name || "",
+      description: product?.description || "",
+      category: product?.category ? (Array.isArray(product.category) ? product.category : [product.category]) : [],
+      price: product?.price || 0,
     },
   });
 
@@ -104,7 +97,7 @@ export function ProductDialog({ product }: any) {
       }
 
       const data = await response.json();
-      console.log("File uploaded successfully:", data.url);
+
       return data.url;
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -135,33 +128,47 @@ export function ProductDialog({ product }: any) {
         image: imageUrl,
       });
 
+      setCurrentCategory('all');
+
       setOpen(false);
       form.reset();
       setImage(null);
       setExistingImageUrl(null);
-      console.log("Product updated successfully");
     } catch (error) {
       console.error('Error updating product:', error);
     }
   };
 
   useEffect(() => {
-    if (product) {
+    if (product && open) {
       setExistingImageUrl(product.image);
+      const categoryValue = product.category ? (Array.isArray(product.category) ? product.category : [product.category]) : [];
       form.reset({
-        name: product.name,
-        description: product.description,
-        category: product.category,
-        price: product.price,
+        name: product.name || "",
+        description: product.description || "",
+        category: categoryValue,
+        price: product.price || 0,
       });
     }
-  }, [product, open]);
+  }, [product, open, form]);
 
   useEffect(() => {
     if (!open) {
       setImage(null);
     }
   }, [open]);
+
+  function handleCheckboxChange(checked: boolean, id: string) {
+    const currentValue = form.getValues("category") || [];
+    
+    if (checked) {
+      const newValue = [...currentValue, categories.find(cat => cat._id === id)];
+      form.setValue("category", newValue);
+    } else {
+      const newValue = currentValue.filter(cat => cat?._id !== id);
+      form.setValue("category", newValue);
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -207,21 +214,25 @@ export function ProductDialog({ product }: any) {
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Categories</FormLabel>
+                  <div className="space-y-2">
+                    {categories.map((category) => {
+                      const isChecked = field.value && Array.isArray(field.value) ? field.value.some((cat: any) => cat?._id === category?._id) : false;
+
+                      return (
+                        <div key={category._id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={category._id}
+                            defaultChecked={isChecked}
+                            onCheckedChange={(checked) => handleCheckboxChange(Boolean(checked), category._id)}
+                          />
+                          <label htmlFor={category._id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            {category.name}
+                          </label>
+                        </div>
+                      )
+                    })}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}

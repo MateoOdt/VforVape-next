@@ -12,8 +12,8 @@ import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function CatalogHeader() {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const { jwtToken, getProducts, setCurrentCategory, getCategories, categories } = useContext(CatalogContext);
+  const { jwtToken, getProducts, setCurrentCategory, getCategories, categories, currentCategory } = useContext(CatalogContext);
+  const [activeCategory, setActiveCategory] = useState(currentCategory || "all");
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 4;
 
@@ -32,6 +32,10 @@ export function CatalogHeader() {
   useEffect(() => {
     getCategories();
   }, []);
+
+  useEffect(() => {
+    setActiveCategory(currentCategory || "all");
+  }, [currentCategory]);
 
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -72,7 +76,7 @@ export function CatalogHeader() {
         />
   
         <div className="order-2 md:order-none w-full">
-          <Tabs defaultValue="all" onValueChange={setActiveCategory}>
+          <Tabs value={activeCategory} onValueChange={setActiveCategory}>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"

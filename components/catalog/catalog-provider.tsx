@@ -78,10 +78,10 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
   const { toast } = useToast();
 
   /**
-   * Fetches the products from the API, optionally filtered by category
+   * Fetches the products from the API, optionally filtered by category ${process.env.API_URL}
    */ 
   const getProducts = useCallback((category?: string, search?: string) => {
-    const url = new URL(`${process.env.API_URL}/products`);
+    const url = new URL(`http://localhost:5000/products`);
     
     // Add query parameters
     if (category && category !== "all") {
@@ -123,7 +123,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
           image: data.image,
         };
 
-        const response = await fetch(`${process.env.API_URL}/products`, {
+        const response = await fetch(`http://localhost:5000/products`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
         });
   
         if (response.ok) {
-          getProducts(data.category);
+          getProducts(currentCategory);
           toast({
             description: 'Votre produit à été ajouté avec succès !',
           });
@@ -152,7 +152,7 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
       try {
         ///${process.env.API_URL}
       
-        const response = await fetch(`${process.env.API_URL}/products/${id}`, {
+        const response = await fetch(`http://localhost:5000/products/${id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -162,7 +162,6 @@ export const CatalogProvider = ({ children }: CatalogProviderProps) => {
         });
   
         if (response.ok) {
-          console.log('Product patched successfully');
           getProducts();
           toast({
             description: 'Votre produit à été modifié avec succès !',

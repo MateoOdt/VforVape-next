@@ -20,13 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import type { ProductFormValues } from "@/types/catalog"
 import { productSchema } from "@/lib/validations/catalog"
@@ -35,9 +29,7 @@ import { CatalogContext } from "./catalog-provider"
 import { useDropzone } from "react-dropzone";
 
 export function AddProductDialog() {
-  const { jwtToken, postProduct, categories } = useContext(CatalogContext);
-
-  console.log(categories);
+  const { jwtToken, postProduct, categories, setCurrentCategory } = useContext(CatalogContext);
 
   const [open, setOpen] = useState(false)
   const [image, setImage] = useState<File | null>(null);
@@ -59,7 +51,7 @@ export function AddProductDialog() {
     defaultValues: {
       name: "",
       description: "",
-      category: "",
+      category: [],
       price: 0,
     },
   });
@@ -81,7 +73,6 @@ export function AddProductDialog() {
       }
   
       const data = await response.json();
-      console.log("File uploaded successfully:", data.url);
       return data.url;
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -112,10 +103,11 @@ export function AddProductDialog() {
         ...data,
         image: uploadedImageUrl,
       });
+
+      setCurrentCategory('all');
   
       setOpen(false);
       form.reset();
-      console.log("Produit créé avec succès");
     } catch (error) {
       console.error('Erreur lors de la création du produit :', error);
     }
@@ -170,21 +162,27 @@ export function AddProductDialog() {
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Catégorie</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner une catégorie" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category._id} value={category._id}>
+                  <FormLabel>Catégories</FormLabel>
+                  <div className="space-y-2">
+                    {categories.map((category) => (
+                      <div key={category._id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={category._id}
+                          checked={field.value?.includes(category._id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              field.onChange([...field.value, category._id]);
+                            } else {
+                              field.onChange(field.value?.filter((id: string) => id !== category._id));
+                            }
+                          }}
+                        />
+                        <label htmlFor={category._id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                           {capitalizeFirstLetter(category.name)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
